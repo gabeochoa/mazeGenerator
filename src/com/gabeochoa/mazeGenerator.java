@@ -1,15 +1,9 @@
 package com.gabeochoa;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Scanner;
+import java.util.Random;
 
 
 public class mazeGenerator{
@@ -68,18 +62,85 @@ public class mazeGenerator{
 		"00000000000000000000000000000000000000000000000000"
 		};
 
+	public static int[][] maze = new int[50][50];
+	
 	public static void main(String[] args) throws Exception {
 		
-		generator();		
+		for(int i=0; i<maze.length; i++)
+			for(int j=0; j < maze[i].length; j++)
+				maze[i][j] = 0;
+		
+		generator();
+		
 		saveFile();
 	}
 
 	private static void generator() {
+		Random random = new Random();
+		int x,y,z;
+		int nx = 0,ny = 0, nz = 0;
+		int count = 0;
 		
+			x = random.nextInt(49);
+			y = random.nextInt(49);
+			z = random.nextInt(4); //0 = up, clockwise  1e  2s 3w
+			
+		while( count < 50)
+		{
+			System.out.println(x+"__"+y+"__"+z);
+			maze[x][y] = 1;
+			nz = z;
+			switch(z)
+			{
+			case 0:
+				ny = y-1;
+				break;
+			case 1:
+				nx = x+1;
+				break;
+			case 2:
+				ny = y+1;
+				break;
+			case 3:
+				nx = x-1;
+				break;
+			}
+			
+			do{
+			z = random.nextInt(4);
+			}while(z == opp(nz));
+			
+			x = nx;
+			y = ny;
+			
+			if(x <0)
+				x = 0;
+			if(x>49)
+				x = 49;
+			if(y <0)
+				y = 0;
+			if(y>49)
+				y = 49;
+			
+			
+			count++;
+		}
+	}
+
+	private static int opp(int nz) {
 		
-		
-		
-		
+		switch(nz)
+		{
+		case 0:
+			return 2;
+		case 1:
+			return 3;
+		case 2:
+			return 0;
+		case 3:
+			return 1;
+		}
+		return 0;
 	}
 
 	private static void saveFile()
@@ -91,11 +152,20 @@ public class mazeGenerator{
 			outfile = new FileOutputStream("maze.txt", false);
 			PrintWriter output = new PrintWriter(outfile);
 
-			for(String str: mazeLine)
-			{
-				output.println(str);
-			}
+//			for(String str: mazeLine)
+//			{
+//				output.println(str);
+//			}
 
+			for(int i=0; i<maze.length; i++)
+				{
+					for(int j=0; j < maze[i].length; j++)
+					{	
+						output.print(maze[i][j]);
+					}
+						output.print("\n");
+				}
+			
 			output.close();
 			
 		} catch (FileNotFoundException e) {
